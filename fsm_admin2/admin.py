@@ -1,6 +1,7 @@
 from aiohttp.http_exceptions import HttpBadRequest
 from django.contrib import messages
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -15,6 +16,7 @@ class FSMTransitionMixin:
     """
     fsm_fields = []
     fsm_transition_form_template = 'fsm_admin2/fsm_transition_form.html'
+    fsm_transition_buttons_template = 'fsm_admin2/fsm_transition_buttons.html'
 
     def __init_subclass__(cls, **kwargs):
         for fsm_field in cls.fsm_fields:
@@ -77,13 +79,13 @@ class FSMTransitionMixin:
                ] + super().get_urls()
 
 
+def _get_display_func_name(fsm_field_name):
+    return f'fsm_display_{fsm_field_name}'
+
+
 def _reverse_object_admin_url(obj):
     info = obj._meta.model._meta.app_label, obj._meta.model._meta.model_name
     return reverse('admin:%s_%s_change' % info, kwargs={'object_id': obj.id})
-
-
-def _get_display_func_name(fsm_field_name):
-    return f'fsm_display_{fsm_field_name}'
 
 
 def _get_transition_title(transition):
@@ -106,12 +108,10 @@ def _get_display_func(field_name):
         info = obj._meta.model._meta.app_label, obj._meta.model._meta.model_name
         url = reverse('admin:%s_%s_transition' % info, kwargs={'object_id': obj.id})
 
-        buttons = (format_html('<a href="{}">{}</a>',
-                               f'{url}?transition={transition.name}',
-                               _get_transition_title(transition)
-                               )
-                   for transition in transitions)
-        return mark_safe('&nbsp;|&nbsp;'.join(buttons))
+        buttons = [{'url': f'{url}?transition={transition.name}',
+                    'title': _get_transition_title(transition)}
+                   for transition in transitions]
+        return render_to_string(self.fsm_transition_buttons_template, {'transition_buttons': buttons})
 
     display_func.short_description = 'Действия'
     return display_func

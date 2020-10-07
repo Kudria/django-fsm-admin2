@@ -1,11 +1,9 @@
-from aiohttp.http_exceptions import HttpBadRequest
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import path, reverse
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.module_loading import import_string
+from django.http import HttpResponseBadRequest
 
 
 class FSMTransitionMixin:
@@ -39,7 +37,7 @@ class FSMTransitionMixin:
         obj = self.get_object(request, kwargs['object_id'])
         transition_method = getattr(obj, transition_name)
         if not hasattr(transition_method, '_django_fsm'):
-            return HttpBadRequest(f'{transition_name} is not a transition method')
+            return HttpResponseBadRequest(f'{transition_name} is not a transition method')
         transition = transition_method._django_fsm.transitions[0]
 
         form_class = _get_transition_form(transition)

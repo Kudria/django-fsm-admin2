@@ -71,7 +71,7 @@ class FSMTransitionMixin:
     def get_urls(self):
         info = self.model._meta.app_label, self.model._meta.model_name
         return [
-                   path('<path:object_id>/delete/',
+                   path('<path:object_id>/transition/',
                         self.admin_site.admin_view(self.fsm_transition_view),
                         name='%s_%s_transition' % info),
                ] + super().get_urls()

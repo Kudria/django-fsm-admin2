@@ -4,11 +4,14 @@ setup(
     name='django-fsm-admin2',
     version='0.1',
     packages=['fsm_admin2'],
+    include_package_data=True,
     url='https://github.com/Kudria/django-fsm-admin2',
-    license='MIT',
     author='Alexandr Kudriavtcev',
     author_email='kudria15@gmail.com',
     description='django-fsm transition integration to django admin.',
+    install_requires=[
+        'django>=2.0'
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

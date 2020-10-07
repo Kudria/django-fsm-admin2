@@ -38,7 +38,10 @@ class FSMTransitionMixin:
         transition_method = getattr(obj, transition_name)
         if not hasattr(transition_method, '_django_fsm'):
             return HttpResponseBadRequest(f'{transition_name} is not a transition method')
-        transition = transition_method._django_fsm.transitions[0]
+        transitions = transition_method._django_fsm.transitions
+        if isinstance(transitions, dict):
+            transitions = list(transitions.values())
+        transition = transitions[0]
 
         form_class = _get_transition_form(transition)
         if form_class:

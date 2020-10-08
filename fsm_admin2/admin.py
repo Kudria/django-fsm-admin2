@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import path, reverse
 from django.utils.module_loading import import_string
+from django.utils.translation import gettext as _
 from django.http import HttpResponseBadRequest
 
 
@@ -65,7 +66,7 @@ class FSMTransitionMixin:
 
         obj.save()
         self.message_user(request,
-                          f'Действие {_get_transition_title(transition)} выполнено',
+                          _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
                           messages.SUCCESS,
                           )
         info = self.model._meta.app_label, self.model._meta.model_name
@@ -114,5 +115,5 @@ def _get_display_func(field_name):
                    for transition in transitions]
         return render_to_string(self.fsm_transition_buttons_template, {'transition_buttons': buttons})
 
-    display_func.short_description = 'Действия'
+    display_func.short_description = _('Transitions')
     return display_func

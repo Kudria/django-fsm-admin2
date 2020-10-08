@@ -1,11 +1,13 @@
 {% extends 'admin/base_site.html' %}
 
+{% load i18n %}
+
 {% block content %}
 <h1>{% if transition.custom.short_description %}{{ transition.custom.short_description }}{% else %}{{ transition.name }}{% endif %}</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Подтвердить">
+    <input type="submit" value="{% translate 'Apply' %}">
 </form>
 
 {% endblock %}

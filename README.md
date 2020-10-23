@@ -2,6 +2,8 @@
 
 [Django-fsm](https://github.com/viewflow/django-fsm) transition integration to django admin.
 
+Passing arguments to transition is supported (unlike **django-fsm-admin** package).
+
 ## Installation
 
 ```pip install git://github.com/kudria/django-fsm-admin2.git#egg=django-fsm-admin2```
@@ -40,7 +42,7 @@ def activate(self):
     ...
 ```
 
-Add form to provide transition arguments.
+Add form to provide transition arguments. Form fields names should match transition function arguments.
 ```
 class DeactivateForm(forms.Form):
     text = forms.Charfield()
@@ -52,3 +54,5 @@ def deactivate(self, text):
 ```
 
 Form class can also be set as import string: ```{'form': 'my_app.forms.DeactivateForm'}```
+
+

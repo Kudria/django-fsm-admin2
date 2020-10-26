@@ -4,3 +4,4 @@ venv/
 virtualenv/
 build/
 dist/
+*.egg-info/

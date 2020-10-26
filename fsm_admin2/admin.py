@@ -27,7 +27,7 @@ class FSMTransitionMixin:
         return super().changeform_view(request, object_id, form_url, extra_context)
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = list(super().get_readonly_fields(request, obj))
+        readonly_fields = list(super().get_readonly_fields(request, obj) or [])
         for fsm_field in self.fsm_fields:
             readonly_fields.append(fsm_field)
             readonly_fields.append(_get_display_func_name(fsm_field))

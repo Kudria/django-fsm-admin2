@@ -26,7 +26,11 @@ from django.contrib import admin
 from fsm_admin2.mixins import FSMTransitionMixin
 
 class MyModelAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_fields = ['status',] # list your fsm fields
+    fsm_fields = ['status',]    # list your fsm fields
+    
+    # you can override templates for transition arguments form view and transition buttons row
+    fsm_transition_form_template = 'fsm_admin2/fsm_transition_form.html'         # default value
+    fsm_transition_buttons_template = 'fsm_admin2/fsm_transition_buttons.html'   # default value
     ...
     
 ```
@@ -43,6 +47,7 @@ def activate(self):
 ```
 
 Add form to provide transition arguments. Form fields names should match transition function arguments.
+
 ```
 class DeactivateForm(forms.Form):
     text = forms.Charfield()

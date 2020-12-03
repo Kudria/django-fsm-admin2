@@ -6,7 +6,7 @@ Passing arguments to transition is supported (unlike **django-fsm-admin** packag
 
 ## Installation
 
-```pip install git://github.com/kudria/django-fsm-admin2.git#egg=django-fsm-admin2```
+```pip install django-fsm-admin2```
 
 Add fsm_admin to your settings.INSTALLED_APPS
 ``` 

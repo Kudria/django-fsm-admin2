@@ -5,6 +5,7 @@ from django.urls import path, reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.http import HttpResponseBadRequest
+from django_fsm import TransitionNotAllowed
 
 
 class FSMTransitionMixin:
@@ -62,7 +63,10 @@ class FSMTransitionMixin:
                               {'transition': transition_name, 'form': form}
                               )
         else:
-            transition_method()
+            try:
+                transition_method()
+            except TransitionNotAllowed:
+                return HttpResponseBadRequest(f'{transition_name} is transition not allowed')
 
         obj.save()
         self.message_user(request,

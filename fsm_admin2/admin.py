@@ -66,13 +66,16 @@ class FSMTransitionMixin:
             try:
                 transition_method()
             except TransitionNotAllowed:
-                return HttpResponseBadRequest(f'{transition_name} is transition not allowed')
-
-        obj.save()
-        self.message_user(request,
-                          _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
-                          messages.SUCCESS,
-                          )
+                self.message_user(request,
+                                  _('Transition %(transition)s is not allowed') %{'transition': _get_transition_title(transition)},
+                                  messages.ERROR,
+                                  )
+            else:
+                obj.save()
+                self.message_user(request,
+                                  _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
+                                  messages.SUCCESS,
+                                  )
         info = self.model._meta.app_label, self.model._meta.model_name
         return redirect('admin:%s_%s_change' % info, object_id=obj.id)
 

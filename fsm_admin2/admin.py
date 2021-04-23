@@ -5,6 +5,7 @@ from django.urls import path, reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.http import HttpResponseBadRequest
+from django_fsm import TransitionNotAllowed
 
 
 class FSMTransitionMixin:
@@ -62,13 +63,19 @@ class FSMTransitionMixin:
                               {'transition': transition_name, 'form': form}
                               )
         else:
-            transition_method()
-
-        obj.save()
-        self.message_user(request,
-                          _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
-                          messages.SUCCESS,
-                          )
+            try:
+                transition_method()
+            except TransitionNotAllowed:
+                self.message_user(request,
+                                  _('Transition %(transition)s is not allowed') %{'transition': _get_transition_title(transition)},
+                                  messages.ERROR,
+                                  )
+            else:
+                obj.save()
+                self.message_user(request,
+                                  _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
+                                  messages.SUCCESS,
+                                  )
         info = self.model._meta.app_label, self.model._meta.model_name
         return redirect('admin:%s_%s_change' % info, object_id=obj.id)
 
@@ -91,6 +98,8 @@ def _reverse_object_admin_url(obj):
 
 
 def _get_transition_title(transition):
+    if hasattr(transition.target, 'label'):
+        return transition.target.label
     return transition.custom.get('short_description') or transition.name
 
 

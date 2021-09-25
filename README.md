@@ -23,7 +23,7 @@ Add FSMTransitionMixin to your admin class
 # admin.py
 
 from django.contrib import admin
-from fsm_admin2.mixins import FSMTransitionMixin
+from fsm_admin2.admin import FSMTransitionMixin
 
 class MyModelAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_fields = ['status',]    # list your fsm fields

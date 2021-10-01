@@ -45,37 +45,26 @@ class FSMTransitionMixin:
             transitions = list(transitions.values())
         transition = transitions[0]
 
+        transition_options = {"by": request.user}
+
         form_class = _get_transition_form(transition)
         if form_class:
-            if request.method == 'POST':
-                form = form_class(request.POST)
-                if form.is_valid():
-                    transition_method(**form.cleaned_data)
-                else:
-                    return render(request,
-                                  self.fsm_transition_form_template,
-                                  {'transition': transition_name, 'form': form}
-                                  )
+            form = form_class(request.POST)
+            if request.method == 'POST' and form.is_valid():
+                transition_options = form.cleaned_data
             else:
-                form = form_class()
-                return render(request,
-                              self.fsm_transition_form_template,
-                              {'transition': transition_name, 'form': form}
-                              )
+                return render(
+                    request, self.fsm_transition_form_template, {'transition': transition_name, 'form': form}
+                )
+
+        try:
+            transition_method(**transition_options)
+        except TransitionNotAllowed:
+            self.message_user(request, _('Transition %(transition)s is not allowed') %{'transition': _get_transition_title(transition)} ,messages.ERROR)
         else:
-            try:
-                transition_method()
-            except TransitionNotAllowed:
-                self.message_user(request,
-                                  _('Transition %(transition)s is not allowed') %{'transition': _get_transition_title(transition)},
-                                  messages.ERROR,
-                                  )
-            else:
-                obj.save()
-                self.message_user(request,
-                                  _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
-                                  messages.SUCCESS,
-                                  )
+            obj.save()
+            self.message_user(request, _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)}, messages.SUCCESS)
+
         info = self.model._meta.app_label, self.model._meta.model_name
         return redirect('admin:%s_%s_change' % info, object_id=obj.id)
 

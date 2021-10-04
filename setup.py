@@ -18,7 +18,7 @@ setup(
     author_email='kudria15@gmail.com',
     description='django-fsm transition integration to django admin.',
     install_requires=[
-        'django>=2.0'
+        'django>=3.0'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

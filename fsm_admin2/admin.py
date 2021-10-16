@@ -40,6 +40,7 @@ class FSMTransitionMixin:
         transition_method = getattr(obj, transition_name)
         if not hasattr(transition_method, '_django_fsm'):
             return HttpResponseBadRequest(f'{transition_name} is not a transition method')
+
         transitions = transition_method._django_fsm.transitions
         if isinstance(transitions, dict):
             transitions = list(transitions.values())
@@ -51,6 +52,7 @@ class FSMTransitionMixin:
                 form = form_class(request.POST)
                 if form.is_valid():
                     transition_method(**form.cleaned_data)
+                    obj.save()
                 else:
                     return render(request,
                                   self.fsm_transition_form_template,
@@ -67,13 +69,15 @@ class FSMTransitionMixin:
                 transition_method()
             except TransitionNotAllowed:
                 self.message_user(request,
-                                  _('Transition %(transition)s is not allowed') %{'transition': _get_transition_title(transition)},
+                                  _('Transition %(transition)s is not allowed')
+                                  % {'transition': _get_transition_title(transition)},
                                   messages.ERROR,
                                   )
             else:
                 obj.save()
                 self.message_user(request,
-                                  _('Transition %(transition)s applied') %{'transition': _get_transition_title(transition)},
+                                  _('Transition %(transition)s applied')
+                                  % {'transition': _get_transition_title(transition)},
                                   messages.SUCCESS,
                                   )
         info = self.model._meta.app_label, self.model._meta.model_name

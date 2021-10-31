@@ -116,7 +116,7 @@ def _get_transition_form(transition):
 
 def _get_display_func(field_name):
     def display_func(self, obj=None):
-        if obj is None:
+        if obj is None or (obj is not None and not obj.pk):
             return ''
         transitions = getattr(obj, f'get_available_user_{field_name}_transitions')(self.request.user)
 

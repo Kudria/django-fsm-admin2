@@ -1,6 +1,6 @@
 # django-fsm-admin2
 
-[Django-fsm](https://github.com/viewflow/django-fsm) transition integration to django admin.
+[Django-fsm](https://github.com/django-commons/django-fsm-2) transition integration to django admin.
 
 Passing arguments to transition is supported (unlike **django-fsm-admin** package).
 
